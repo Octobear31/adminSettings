@@ -1,0 +1,28 @@
+#uniq_id_admin_settings {
+  .MuiFormControl-root {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-bottom: 20px;
+
+    .MuiFormLabel-root {
+      flex: 0 0 410px;
+    }
+
+    .input-area {
+      flex: 1;
+
+      .MuiFormControl-root {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .tab-panel {
+    width: 100%;
+
+    .MuiFormHelperText-root {
+      margin-left: 0;
+    }
+  }
+}

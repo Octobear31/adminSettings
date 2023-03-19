@@ -1,125 +1,125 @@
-import * as React from "react";
-import { useEffect } from "react";
-import PropTypes from "prop-types";
+import {useEffect, useState} from "react";
 import {
-  Tabs,
-  Tab,
-  Typography,
-  Box,
-  FormHelperText,
-  FormControl,
-  useFormControl,
-  TextField,
-  InputLabel,
-  FormLabel,
+    Tabs,
+    Tab,
+    Box,
+    FormHelperText,
+    FormControl,
+    TextField,
+    FormLabel,
+    Button
 } from "@mui/material";
+import TabPanel from "./TabPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
-import Input from "./Input";
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
 
 function a11yProps(index) {
-  return {
-    id: `vertical-tab-${index}`,
-    "aria-controls": `vertical-tabpanel-${index}`,
-  };
+    return {
+        id: `vertical-tab-${index}`,
+        "aria-controls": `vertical-tabpanel-${index}`,
+    };
 }
 
 export default function Main() {
-  const [value, setValue] = React.useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+    const [formData, setFormData] = useState({});
 
-  const [formData, setFormData] = React.useState({});
+    useEffect(() => {
+        setFormData({currentTab: 0, videoPerPage: '', youtubeApiKey: ''});
+        setIsLoading(false);
+    }, []);
 
-  function handleInputValue(event) {
-    setFormData((prevFormData) => {
-      return {
-        ...prevFormData,
-        [event.target.name]: event.target.value,
-      };
-    });
-  }
+    function handleInputValue(event) {
+        setFormData((prevFormData) => {
+            return {
+                ...prevFormData,
+                [event.target.name]: event.target.value,
+            };
+        });
+    }
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+    const handleTabChange = (event, newValue) => {
+        setFormData((prevFormData) => {
+            return {
+                ...prevFormData,
+                currentTab: newValue,
+            };
+        });
+    };
 
-  return (
-    <Box
-      sx={{
-        flexGrow: 1,
-        bgcolor: "background.paper",
-        display: "flex",
-      }}
-    >
-      <Tabs
-        orientation="vertical"
-        value={value}
-        onChange={handleChange}
-        aria-label="Vertical tabs example"
-        sx={{ borderRight: 1, borderColor: "divider" }}
-      >
-        <Tab
-          label="General"
-          icon={<SettingsIcon />}
-          iconPosition="start"
-          {...a11yProps(0)}
-        />
-        <Tab label="Item Two" {...a11yProps(1)} />
-        <Tab label="Item Three" {...a11yProps(2)} />
-      </Tabs>
-      <TabPanel value={value} index={0}>
-        <FormControl sx={{ width: "25ch" }}>
-          <FormLabel name="name">YouTube API Key</FormLabel>
-          <TextField
-            fullWidth
-            id="fullWidth"
-            name="youtubeApiKey"
-            value={formData.youtubeApiKey}
-            onChange={handleInputValue}
-          />
-          <FormHelperText>Insert your Youtube API key</FormHelperText>
-        </FormControl>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <FormControl sx={{ width: "25ch" }}>
-          <FormLabel name="name">Video Per Page</FormLabel>
-          <TextField
-            fullWidth
-            id="fullWidth"
-            name="videoPerPage"
-            value={formData.videoPerPage}
-            onChange={handleInputValue}
-          />
-          <FormHelperText>Insert your Youtube API key</FormHelperText>
-        </FormControl>
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        <p>{JSON.stringify(formData)}</p>
-      </TabPanel>
-    </Box>
-  );
+    const handleSaveSettings = () => {
+        console.log(JSON.stringify(formData));
+    }
+
+    if (isLoading) {
+        return (
+            <div>Loader...</div>
+        );
+    }
+
+    return (
+        <Box
+            sx={{
+                flexGrow: 1,
+                display: "flex",
+            }}
+        >
+            <Tabs
+                orientation="vertical"
+                value={formData.currentTab}
+                onChange={handleTabChange}
+                aria-label="Vertical tabs example"
+                sx={{borderRight: 1, borderColor: "divider"}}
+            >
+                <Tab
+                    label="General"
+                    icon={<SettingsIcon/>}
+                    iconPosition="start"
+                    {...a11yProps(0)}
+                />
+                <Tab label="Item Three" {...a11yProps(1)} />
+            </Tabs>
+            <TabPanel value={formData.currentTab} index={0}>
+                <FormControl>
+                    <FormLabel htmlFor="youtubeApiKey" name="name">YouTube API Key</FormLabel>
+                    <div className="input-area">
+                        <TextField
+                            fullWidth={false}
+                            id="youtubeApiKey"
+                            name="youtubeApiKey"
+                            value={formData.youtubeApiKey}
+                            onChange={handleInputValue}
+                            placeholder="Enter API key"
+                            size="small"
+                        />
+                        <FormHelperText>Insert your YouTube API key.</FormHelperText>
+                    </div>
+                </FormControl>
+                <FormControl>
+                    <FormLabel htmlFor="videoPerPage" name="name">Video Per Page</FormLabel>
+                    <div className="input-area">
+                        <TextField
+                            fullWidth={false}
+                            id="videoPerPage"
+                            name="videoPerPage"
+                            value={formData.videoPerPage}
+                            onChange={handleInputValue}
+                            size="small"
+                            type="number"
+                        />
+                        <FormHelperText>Insert your Youtube API key</FormHelperText>
+                    </div>
+                </FormControl>
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSaveSettings}
+                >
+                    Save changes
+                </Button>
+            </TabPanel>
+            <TabPanel value={formData.currentTab} index={1} sx={{width: '100%'}}>
+                {JSON.stringify(formData)}
+            </TabPanel>
+        </Box>
+    );
 }

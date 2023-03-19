@@ -1,11 +1,11 @@
 import * as React from "react";
-import TextField from "@mui/material/TextField";
 import ReactDOM from "react-dom/client";
 import Main from "./Main";
+import "./css/index.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <div>
+  <div id="uniq_id_admin_settings">
     <Main />
   </div>
 );
